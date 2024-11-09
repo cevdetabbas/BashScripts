@@ -1,0 +1,32 @@
+#!/bin/bash
+if ! command -v rsync &> /dev/null; then echo "rsync is not installed. Installing it now..."; if [ -f /etc/debian_version ]; then echo "Detected Debian-based system. Installing rsync using apt..."; sudo apt update && sudo apt install -y rsync; elif [ -f /etc/redhat-release ]; then echo "Detected Red Hat-based system. Installing rsync using yum..."; sudo yum install -y rsync; else echo "Unsupported system. Please install rsync manually."; exit 1; fi; else echo "rsync is already installed."; fi
+
+# Determine the correct Windows username (either cevo or tm)
+WIN_USER=$(ls /mnt/c/Users | grep -E 'cevo|tm')
+
+# Define paths
+SRC_ENAKTARS="/mnt/c/Users/$WIN_USER/OneDrive/Desktop/zEnaktars"
+SRC_KILITS="/mnt/c/Users/$WIN_USER/OneDrive/Desktop/zKilits"
+DEST_ENAKTARS="/root/zEnaktars"
+DEST_KILITS="/root/zKilits"
+
+# Ensure destination directories exist
+mkdir -p $DEST_ENAKTARS $DEST_KILITS
+
+# Sync the Enaktars and Kilits directories to /root, deleting any extra files
+rsync -av --delete $SRC_ENAKTARS/ $DEST_ENAKTARS/
+rsync -av --delete $SRC_KILITS/ $DEST_KILITS/
+rm -rf /root/*Enaktar.key
+cp -r /root/zEnaktars/* /root/
+
+# Set permissions for the Enaktars keys in /root/zEnaktars and copy them to /root
+chmod 400 $DEST_ENAKTARS/*
+rsync -av --delete $DEST_ENAKTARS/*.key $DEST_ENAKTARSS/
+chmod 400 /root/*Enaktar.key
+
+# Copy baglan and knownhostutemizle scripts and make them executable
+
+cp -r /mnt/c/Users/$WIN_USER/OneDrive/Documents/BashScripts/baglan /bin/
+chmod +x /bin/baglan
+cp -r /mnt/c/Users/$WIN_USER/OneDrive/Documents/BashScripts/knownhostutemizle /bin/
+chmod +x /bin/knownhostutemizle
