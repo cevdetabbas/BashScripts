@@ -1,0 +1,8 @@
+#!/bin/bash
+
+WIN_USER=$(ls /mnt/c/Users | grep -E 'cevo|tm')
+
+
+echo "ssh -i /root/$1Enaktar.key ubuntu@$1.cevdetabbas.com"
+ssh -i /root/$1Enaktar.key ubuntu@$1.cevdetabbas.com
+
