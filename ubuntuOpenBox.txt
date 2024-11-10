@@ -1,6 +1,6 @@
-sudo apt install xorg openbox slim 
-
-sudo apt install iptables xrdp vi 
+sudo apt install xorg openbox slim -y
+sudo rebootrebo
+sudo apt install iptables xrdp vim -y
 
 sudo systemctl enable xrdp --now
 
@@ -23,12 +23,32 @@ echo "plank &" >> ~/.config/openbox/autostart
 sudo apt install compton -y # dock zoom in dalgasi
 echo "compton &" >> ~/.config/openbox/autostart 
 
-apt install tint2 -y  # this is taskbar cok ta lazim degil
+sudo apt install tint2 -y  # this is taskbar cok ta lazim degil
 
-apt install -y trayer  # bu systray calisan system tray app lerini gosterecek lazim yani
-echo "trayer --edge bottom --align right --widthtype request --SetDockType true --expand true --transparent true --alpha 0 --tint 0x000000 --height 24 &" >> ~/.config/openbox/autostart 
+# trayer bunun biraz ellenmesi lazim
+sudo apt install -y trayer  # bu systray calisan system tray app lerini gosterecek lazim yani
+sudo echo "trayer --edge bottom --align right --widthtype request --SetDockType true --expand true --transparent true --alpha 0 --tint 0x000000 --height 25 &" >> ~/.config/openbox/autostart 
 
 # apps to try 
+sudo apt install caffeine -y
+caffeine-indicator &
+
+# nomachine
+wget https://download.nomachine.com/download/8.14/Linux/nomachine_8.14.2_1_amd64.deb
+sudo dpkg -i nomachine_8.14.2_1_amd64.deb
+
+# anydesk
+sudo wget -qO - https://keys.anydesk.com/repos/DEB-GPG-KEY | apt-key add -
+sudo echo "deb http://deb.anydesk.com/ all main" > /etc/apt/sources.list.d/anydesk-stable.list
+sudo apt update -y
+sudo apt install anydesk -y
+
+# jetbrain toolbox
+wget https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.5.1.34629.tar.gz
+tar xvf jetbrains-toolbox-2.5.1.34629.tar.gz
+cd jetbrains-toolbox-2.5.1.34629.tar.gz
+chmod 777 jetbrains-toolbox
+./jetbrains-toolbox
 
 # installation of google chrome 
 wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
