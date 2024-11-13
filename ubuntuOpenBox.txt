@@ -1,5 +1,5 @@
 sudo apt install xorg openbox slim -y
-sudo rebootrebo
+sudo reboot
 sudo apt install iptables xrdp vim -y
 
 sudo systemctl enable xrdp --now
@@ -56,6 +56,10 @@ sudo dpkg -i google-chrome-stable_current_amd64.deb
 sudo apt-get install -f # this will handle the dependencies
 google-chrome
 
+# passwordless sudo
+wget https://raw.githubusercontent.com/cevdetabbas/BashScripts/refs/heads/main/setup_passwordless_sudo
+chmod 777 setup_passwordless_sudo
+sudo ./setup_passwordless_sudo
 
 
 

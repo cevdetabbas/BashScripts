@@ -1,0 +1,88 @@
+#!/bin/bash
+
+# Check if rsync is installed, and install it if it's not
+if ! command -v rsync &> /dev/null; then
+    echo "rsync is not installed. Installing it now..."
+    if [ -f /etc/debian_version ]; then
+        echo "Detected Debian-based system. Installing rsync using apt..."
+        sudo apt update && sudo apt install -y rsync
+    elif [ -f /etc/redhat-release ]; then
+        echo "Detected Red Hat-based system. Installing rsync using yum..."
+        sudo yum install -y rsync
+    else
+        echo "Unsupported system. Please install rsync manually."
+        exit 1
+    fi
+else
+    echo "rsync is already installed."
+fi
+
+# Get the username (assuming 'cevo' or 'tm' are the expected user folders)
+UN=$(ls /mnt/c/Users | grep -E 'cevo|tm')
+
+# Define source and destination directories
+SOURCE_DIR="/mnt/c/Users/$UN/OneDrive/Desktop/zEnaktars"
+DEST_DIR="/root/zEnaktars"
+SOURCE_DIRR="/mnt/c/Users/$UN/OneDrive/Desktop/zKilits"
+DEST_DIRR="/root/zKilits"
+
+# Check if source directories exist
+if [ ! -d "$SOURCE_DIR" ]; then
+    echo "Source directory $SOURCE_DIR does not exist. Please check the path."
+    exit 1
+fi
+if [ ! -d "$SOURCE_DIRR" ]; then
+    echo "Source directory $SOURCE_DIRR does not exist. Please check the path."
+    exit 1
+fi
+
+# Check if /root/zEnaktars exists, if not, create it
+if [ ! -d "$DEST_DIR" ]; then
+    echo "/root/zEnaktars does not exist. Creating it now..."
+    mkdir -p "$DEST_DIR"
+else
+    echo "/root/zEnaktars already exists."
+fi
+
+# Check if /root/zKilits exists, if not, create it
+if [ ! -d "$DEST_DIRR" ]; then
+    echo "/root/zKilits does not exist. Creating it now..."
+    mkdir -p "$DEST_DIRR"
+else
+    echo "/root/zKilits already exists."
+fi
+
+# Remove existing files in destination directories (if any)
+echo "Removing existing files from $DEST_DIR and $DEST_DIRR..."
+rm -rf "$DEST_DIR"/*
+rm -rf "$DEST_DIRR"/*
+echo "Existing files removed from Enaktarlar and Kilitler directories."
+
+# Copy files from source directories to destination
+echo "Copying files from $SOURCE_DIR to $DEST_DIR... and $SOURCE_DIRR to $DEST_DIRR..."
+cp -r "$SOURCE_DIR"/* "$DEST_DIR"/
+cp -r "$SOURCE_DIRR"/* "$DEST_DIRR"/
+
+# Set file permissions to 400 for the copied files
+echo "Setting permissions to 400 for files in $DEST_DIR and $DEST_DIRR..."
+chmod -R 400 "$DEST_DIR"/*
+chmod -R 400 "$DEST_DIRR"/*
+
+# Create the baglan script and make it executable
+echo "Creating the baglan script..."
+BAGLAN_SCRIPT="/bin/baglan"
+echo "ssh -i /root/zEnaktars/\$1Enaktar.key ubuntu@\$1.cevdetabbas.com" > "$BAGLAN_SCRIPT"
+chmod +x "$BAGLAN_SCRIPT"
+
+# Create the knownhostutemizle script and make it executable
+echo "Creating the knownhostutemizle script..."
+echo 'echo "" | sudo tee /root/.ssh/known_hosts' > /bin/knownhostutemizle
+chmod +x /bin/knownhostutemizle
+
+echo "Script completed successfully."
+
+# Create a symbolic link in /bin if it doesn't exist or recreate it if necessary
+ln -s /mnt/c/Users/cevo/OneDrive/Documents/BashScripts/kahya /bin/
+chmod 777 /bin/kahya
+
+echo "The symbolic link has been set up successfully. You can now run 'kahya' to execute the script from OneDrive."

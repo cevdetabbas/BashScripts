@@ -1,8 +1,26 @@
 #!/bin/bash
 
-WIN_USER=$(ls /mnt/c/Users | grep -E 'cevo|tm')
+# Ensure the key name is provided
+if [ -z "$1" ]; then
+    echo "Error: You must provide the key name (without extension) as the first argument."
+    exit 1
+fi
 
+# Full path to the key file in the zEnaktars directory
+KEY_FILE="/root/zEnaktars/$1Enaktar.key"
 
-echo "ssh -i /root/$1Enaktar.key ubuntu@$1.cevdetabbas.com"
-ssh -i /root/$1Enaktar.key ubuntu@$1.cevdetabbas.com
+# Check if the key file exists
+if [ ! -f "$KEY_FILE" ]; then
+    echo "Error: Key file '$KEY_FILE' not found."
+    exit 1
+fi
 
+# Check if the key file has the correct permissions
+if [ ! -r "$KEY_FILE" ]; then
+    echo "Error: Key file '$KEY_FILE' is not readable."
+    exit 1
+fi
+
+# Proceed with SSH connection
+echo "Connecting to ubuntu@$1.cevdetabbas.com using key '$KEY_FILE'..."
+ssh -i "$KEY_FILE" ubuntu@"$1.cevdetabbas.com"
