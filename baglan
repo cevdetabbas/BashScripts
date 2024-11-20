@@ -15,12 +15,19 @@ if [ ! -f "$KEY_FILE" ]; then
     exit 1
 fi
 
-# Check if the key file has the correct permissions
-if [ ! -r "$KEY_FILE" ]; then
-    echo "Error: Key file '$KEY_FILE' is not readable."
-    exit 1
-fi
+# Function to attempt SSH connection
+attempt_ssh() {
+    local user=$1
+    local host=$2
+    echo "Connecting to $user@$host using key '$KEY_FILE'..."
+    ssh -i "$KEY_FILE" "$user"@"$host"
+}
 
-# Proceed with SSH connection
-echo "Connecting to ubuntu@$1.cevdetabbas.com using key '$KEY_FILE'..."
-ssh -i "$KEY_FILE" ubuntu@"$1.cevdetabbas.com"
+# First attempt with 'ubuntu' user
+attempt_ssh "ubuntu" "$1.cevdetabbas.com"
+
+# If the first attempt fails (non-zero exit code), try with 'opc' user
+if [ $? -ne 0 ]; then
+    echo "Failed to connect as 'ubuntu'. Trying 'opc' user..."
+    attempt_ssh "opc" "$1.cevdetabbas.com"
+fi

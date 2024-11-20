@@ -1,29 +1,37 @@
-sudo apt install xorg openbox slim -y
-sudo reboot
-sudo apt install iptables xrdp vim -y
+# user ubuntu uzerinden gidilecek
+sudo passwd ubuntu # bunu unutma
 
+sudo apt update -y && sudo apt upgrade -y 
+sudo apt install xorg -y 
+sudo apt install openbox -y 
+sudo apt install slim -y 
+sudo apt install iptables -y  
+sudo apt install xrdp -y  
+sudo apt install vim -y 
+
+
+sudo sed -i '/-A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT/a -A INPUT -p tcp -m state --state NEW -m tcp --dport 3389 -j ACCEPT' /etc/iptables/rules.v4
+
+sudo iptables-restore < /etc/iptables/rules.v4 
+mkdir -p ~/.config/openbox 
+touch ~/.config/openbox/autostart 
 sudo systemctl enable xrdp --now
 
-sudo iptables -A INPUT -p tcp --dport 3389 -j ACCEPT
+sudo reboot
 
-#yada
+sudo apt install nitrogen -y && echo "nitrogen --restore " >> ~/.config/openbox/autostart
 
-/etc/iptables/v4 lu olana 3389 u ekle
+wget https://fedoraproject.org/w/uploads/2/27/F36-01-day.jpg
+nitrogen --set-zoom-fill ./F36-01-day.jpg  # DO IT ON SESSION OPENED WINDOW
+sudo nitrogen --save
+sudo echo "nitrogen --restore " >> ~/.config/openbox/autostart
 
-mkdir -p ~/.config/openbox
-touch ~/.config/openbox/autostart
-
-sudo apt install nitrogen -y # background image icin program
-echo "nitrogen --restore " >> ~/.config/openbox/autostart 
 
 sudo apt install plank -y # dock for openbox ctrl ile sag tusa tiklayinca preferences aciliyo
-
 echo "plank &" >> ~/.config/openbox/autostart 
 
 sudo apt install compton -y # dock zoom in dalgasi
-echo "compton &" >> ~/.config/openbox/autostart 
-
-sudo apt install tint2 -y  # this is taskbar cok ta lazim degil
+sudo echo "compton &" >> ~/.config/openbox/autostart 
 
 # trayer bunun biraz ellenmesi lazim
 sudo apt install -y trayer  # bu systray calisan system tray app lerini gosterecek lazim yani
@@ -58,8 +66,10 @@ google-chrome
 
 # passwordless sudo
 wget https://raw.githubusercontent.com/cevdetabbas/BashScripts/refs/heads/main/setup_passwordless_sudo
-chmod 777 setup_passwordless_sudo
+sudo chmod 777 setup_passwordless_sudo
 sudo ./setup_passwordless_sudo
+
+
 
 
 

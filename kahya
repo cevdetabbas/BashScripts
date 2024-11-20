@@ -17,72 +17,64 @@ else
     echo "rsync is already installed."
 fi
 
+###############################################################################
+########## Copying directories and scripts from OneDrive ####################
+###############################################################################
+
 # Get the username (assuming 'cevo' or 'tm' are the expected user folders)
 UN=$(ls /mnt/c/Users | grep -E 'cevo|tm')
 
-# Define source and destination directories
-SOURCE_DIR="/mnt/c/Users/$UN/OneDrive/Desktop/zEnaktars"
-DEST_DIR="/root/zEnaktars"
-SOURCE_DIRR="/mnt/c/Users/$UN/OneDrive/Desktop/zKilits"
-DEST_DIRR="/root/zKilits"
+# Define source directories in OneDrive and destination directories in WSL
+SOURCE_DIRECTORY_OF_ENAKTARS_IN_ONE_DRIVE="/mnt/c/Users/$UN/OneDrive/Desktop/zEnaktars"
+SOURCE_DIRECTORY_OF_KILITS_IN_ONE_DRIVE="/mnt/c/Users/$UN/OneDrive/Desktop/zKilits"
+DEST_DIRECTORY_OF_WSL_ROOT_ENAKTARS="/root/zEnaktars"
+DEST_DIRECTORY_OF_ROOT_KILITS="/root/zKilits"
+DEST_DIRECTORY_OF_SCRIPTS="/mnt/c/Users/$UN/OneDrive/Documents/BashScripts"
 
-# Check if source directories exist
-if [ ! -d "$SOURCE_DIR" ]; then
-    echo "Source directory $SOURCE_DIR does not exist. Please check the path."
-    exit 1
-fi
-if [ ! -d "$SOURCE_DIRR" ]; then
-    echo "Source directory $SOURCE_DIRR does not exist. Please check the path."
-    exit 1
-fi
+echo "Starting the process of removing existing directories and files..."
 
-# Check if /root/zEnaktars exists, if not, create it
-if [ ! -d "$DEST_DIR" ]; then
-    echo "/root/zEnaktars does not exist. Creating it now..."
-    mkdir -p "$DEST_DIR"
-else
-    echo "/root/zEnaktars already exists."
-fi
+# Remove existing directories and files in the destination
+rm -rf /root/zEnaktars
+rm -rf /root/zKilits
+rm -rf /root/*Enaktar*
+rm -rf /bin/baglan
+rm -rf /bin/knownhostutemizle
+rm -rf /bin/kahya
+rm -rf /bin/gonder
 
-# Check if /root/zKilits exists, if not, create it
-if [ ! -d "$DEST_DIRR" ]; then
-    echo "/root/zKilits does not exist. Creating it now..."
-    mkdir -p "$DEST_DIRR"
-else
-    echo "/root/zKilits already exists."
-fi
 
-# Remove existing files in destination directories (if any)
-echo "Removing existing files from $DEST_DIR and $DEST_DIRR..."
-rm -rf "$DEST_DIR"/*
-rm -rf "$DEST_DIRR"/*
-echo "Existing files removed from Enaktarlar and Kilitler directories."
+echo "Existing directories and files removed successfully."
 
-# Copy files from source directories to destination
-echo "Copying files from $SOURCE_DIR to $DEST_DIR... and $SOURCE_DIRR to $DEST_DIRR..."
-cp -r "$SOURCE_DIR"/* "$DEST_DIR"/
-cp -r "$SOURCE_DIRR"/* "$DEST_DIRR"/
+###############################################################################
+########## Copy new files to destination directories ########################
+###############################################################################
 
-# Set file permissions to 400 for the copied files
-echo "Setting permissions to 400 for files in $DEST_DIR and $DEST_DIRR..."
-chmod -R 400 "$DEST_DIR"/*
-chmod -R 400 "$DEST_DIRR"/*
+echo "Copying new directories and scripts to destination..."
 
-# Create the baglan script and make it executable
-echo "Creating the baglan script..."
-BAGLAN_SCRIPT="/bin/baglan"
-echo "ssh -i /root/zEnaktars/\$1Enaktar.key ubuntu@\$1.cevdetabbas.com" > "$BAGLAN_SCRIPT"
-chmod +x "$BAGLAN_SCRIPT"
+# Copy new directories and scripts to the destination
+cp -r $SOURCE_DIRECTORY_OF_ENAKTARS_IN_ONE_DRIVE /root/
+cp -r $SOURCE_DIRECTORY_OF_KILITS_IN_ONE_DRIVE /root/
+cp -r $DEST_DIRECTORY_OF_SCRIPTS/baglan /bin
+cp -r $DEST_DIRECTORY_OF_SCRIPTS/knownhostutemizle /bin
+cp -r $DEST_DIRECTORY_OF_SCRIPTS/kahya /bin
+cp -r $DEST_DIRECTORY_OF_SCRIPTS/gonder /bin
 
-# Create the knownhostutemizle script and make it executable
-echo "Creating the knownhostutemizle script..."
-echo 'echo "" | sudo tee /root/.ssh/known_hosts' > /bin/knownhostutemizle
+echo "Directories and scripts copied successfully."
+
+###############################################################################
+########## Set file permissions ##############################################
+###############################################################################
+
+echo "Changing file permissions..."
+
+# Change permissions for the copied files
+chmod -R 400 /root/zEnaktars/*
+chmod +x /bin/baglan
 chmod +x /bin/knownhostutemizle
+chmod +x /bin/kahya
+chmod +x /bin/gonder
 
-echo "Script completed successfully."
+echo "File permissions set successfully."
 
-# Create a symbolic link in /bin if it doesn't exist or recreate it if necessary
-ln -s /mnt/c/Users/cevo/OneDrive/Documents/BashScripts/kahya /bin/
-chmod 777 /bin/kahya
-
-echo "The symbolic link has been set up successfully. You can now run 'kahya' to execute the script from OneDrive."
+# Script completed
+echo "Script completed successfully!"
