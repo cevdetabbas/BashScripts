@@ -35,11 +35,13 @@ sudo echo "compton &" >> ~/.config/openbox/autostart
 
 # trayer bunun biraz ellenmesi lazim
 sudo apt install -y trayer  # bu systray calisan system tray app lerini gosterecek lazim yani
-sudo echo "trayer --edge bottom --align right --widthtype request --SetDockType true --expand true --transparent true --alpha 0 --tint 0x000000 --height 25 &" >> ~/.config/openbox/autostart 
+sudo echo "trayer --edge bottom --align right --widthtype request --height 40 --transparent true --alpha 0 --tint 0x333333 --iconspacing 4 --padding 4 &" >> ~/.config/openbox/autostart 
 
 # apps to try 
 sudo apt install caffeine -y
 caffeine-indicator &
+
+# tailscale
 
 # nomachine
 wget https://download.nomachine.com/download/8.14/Linux/nomachine_8.14.2_1_amd64.deb
