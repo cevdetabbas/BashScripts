@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Ensure the key name is provided
+# Ensure the key name is provided d
 if [ -z "$1" ]; then
     echo "Error: You must provide the key name (without extension) as the first argument."
     exit 1
