@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# CRONTAB UPDATE
+CRON_JOB="0 5 * * * sudo apt update && sudo apt upgrade -y && sudo reboot"
+(crontab -l 2>/dev/null | grep -F "$CRON_JOB") && echo "Cron job already exists." && exit 0
+(crontab -l 2>/dev/null; echo "$CRON_JOB") | crontab -
+
+echo "Cron job added successfully."
+
+# KNOWN HOSTS CLEANER
+KNOWNHOST_SCRIPT="/bin/knownhostutemizle"
+if [ ! -f "$KNOWNHOST_SCRIPT" ]; then
+    echo "#!/bin/bash" > "$KNOWNHOST_SCRIPT"
+    echo "sudo echo \"\" > /root/.ssh/known_hosts" >> "$KNOWNHOST_SCRIPT"
+    chmod +x "$KNOWNHOST_SCRIPT"
+    echo "Known hosts cleaner script created at /bin/knownhostutemizle"
+else
+    echo "Known hosts cleaner script already exists."
+fi
+
