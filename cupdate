@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# ==========================================
+#   capdate - Advanced System Update Script
+#   Author: ChatGPT
+# ==========================================
+
+LOGFILE="/var/log/capdate.log"
+DATE=$(date "+%Y-%m-%d %H:%M:%S")
+
+# Colors
+GREEN="\e[32m"
+YELLOW="\e[33m"
+RED="\e[31m"
+BLUE="\e[34m"
+RESET="\e[0m"
+
+log() {
+    echo -e "${BLUE}[$(date '+%H:%M:%S')]${RESET} $1"
+    echo "[$DATE] $1" >> "$LOGFILE"
+}
+
+run_step() {
+    log "${YELLOW}$1...${RESET}"
+    if bash -c "$2"; then
+        log "${GREEN}✔ $1 completed${RESET}"
+    else
+        log "${RED}✖ $1 failed${RESET}"
+        exit 1
+    fi
+}
+
+log "=========== capdate started ==========="
+
+run_step "Updating package lists"      "sudo apt update"
+run_step "Upgrading installed packages"  "sudo apt upgrade -y"
+run_step "Running dist-upgrade"          "sudo apt dist-upgrade -y"
+run_step "Removing unused packages"      "sudo apt autoremove -y"
+run_step "Cleaning up apt cache"         "sudo apt autoclean -y"
+
+log "=========== capdate finished =========="
+
+echo -e "${GREEN}All updates completed successfully.${RESET}"
+echo -e "${BLUE}Log saved to:${RESET} $LOGFILE"
