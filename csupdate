@@ -23,3 +23,4 @@ cd "$TARGET_DIR"
 docker compose up -d
 
 echo "Done!"
+

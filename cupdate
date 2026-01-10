@@ -1,23 +1,32 @@
 #!/bin/bash
 
 # ==========================================
-#   capdate - Advanced System Update Script
-#   Author: ChatGPT
+#   cupdate - Advanced System Update Script
 # ==========================================
 
-LOGFILE="/var/log/capdate.log"
-DATE=$(date "+%Y-%m-%d %H:%M:%S")
+LOGFILE="/var/log/cupdate.log"
 
-# Colors
+# Colors only for terminal
 GREEN="\e[32m"
 YELLOW="\e[33m"
 RED="\e[31m"
 BLUE="\e[34m"
 RESET="\e[0m"
 
+# Strip colors for logs (sed removes escape codes)
+strip_colors() {
+    echo -e "$1" | sed 's/\x1B\[[0-9;]*[A-Za-z]//g'
+}
+
 log() {
-    echo -e "${BLUE}[$(date '+%H:%M:%S')]${RESET} $1"
-    echo "[$DATE] $1" >> "$LOGFILE"
+    local time_now=$(date "+%Y-%m-%d %H:%M:%S")
+    local msg="$1"
+
+    # Print to terminal with colors
+    echo -e "${BLUE}[$(date '+%H:%M:%S')]${RESET} $msg"
+
+    # Log without colors
+    echo "[$time_now] $(strip_colors "$msg")" >> "$LOGFILE"
 }
 
 run_step() {
@@ -30,15 +39,16 @@ run_step() {
     fi
 }
 
-log "=========== capdate started ==========="
+log "=========== cupdate started ==========="
 
-run_step "Updating package lists"      "sudo apt update"
+run_step "Updating package lists"        "sudo apt update"
 run_step "Upgrading installed packages"  "sudo apt upgrade -y"
 run_step "Running dist-upgrade"          "sudo apt dist-upgrade -y"
 run_step "Removing unused packages"      "sudo apt autoremove -y"
 run_step "Cleaning up apt cache"         "sudo apt autoclean -y"
 
-log "=========== capdate finished =========="
+log "=========== cupdate finished =========="
 
 echo -e "${GREEN}All updates completed successfully.${RESET}"
 echo -e "${BLUE}Log saved to:${RESET} $LOGFILE"
+
