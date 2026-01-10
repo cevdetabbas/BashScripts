@@ -1,0 +1,18 @@
+# /etc/systemd/system/iskele-backup.service
+[Unit]
+Description=Iskele daily backup script
+
+[Service]
+Type=oneshot
+User=root
+Group=root
+ExecStart=/home/tm/Scripts/iskele-backup.sh
+WorkingDirectory=/home/tm
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+TimeoutStartSec=6h
+
+[Install]
+WantedBy=multi-user.target
+
