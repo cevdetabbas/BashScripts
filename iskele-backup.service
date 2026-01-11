@@ -1,4 +1,4 @@
-# /etc/systemd/system/iskele-backup.service
+# put this /etc/systemd/system in this folder
 [Unit]
 Description=Iskele daily backup script
 
